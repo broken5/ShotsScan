@@ -5,6 +5,7 @@ import geoip2.database
 import ipdb
 import ipaddress
 import socket
+import time
 from pathlib import Path
 
 
@@ -55,10 +56,13 @@ def put_port(port_data):
 
 def put_subdomain(domain_data):
     try:
-        url = config.put_subdomain_url + f'?key={config.key}'
-        r = requests.post(url, data=json.dumps(domain_data))
-        # print(json.dumps(domain_data))
-        return r.json()
+        n = 100
+        subdomain_list = domain_data['data']
+        for i in [subdomain_list[i:i + n] for i in range(0, len(subdomain_list), n)]:
+            url = config.put_subdomain_url + f'?key={config.key}'
+            domain_data['data'] = i
+            r = requests.post(url, data=json.dumps(domain_data))
+            time.sleep(1)
     except Exception as e:
         return e
 
@@ -70,9 +74,15 @@ def get_ip_info(ip, subdomian=''):
             addr = socket.getaddrinfo(subdomian, 'http')
             ip = addr[0][4][0]
             ip_info['ip'] = ip
-        ip_db = ipdb.City(Path(__file__).parent.joinpath('ipdata.ipdb'))
-        city_info = ip_db.find(ip, 'CN')
-        ip_info['city'] = city_info[0] + city_info[1] + city_info[2] + city_info[3] + city_info[4]
+        try:
+            city_info = config.ip_db.find_map(ip, 'CN')
+            if city_info['region_name'] == city_info['city_name']:
+                ip_info['city'] = city_info['country_name'] + city_info['region_name'] + city_info['isp_domain']
+            else:
+                ip_info['city'] = city_info['country_name'] + city_info['region_name'] + city_info['city_name'] +\
+                                  city_info['isp_domain']
+        except Exception as e:
+            ip_info['city'] = ''
         if ipaddress.ip_address(ip).is_private:
             ip_info['is_private'] = True
             return ip_info
@@ -80,11 +90,10 @@ def get_ip_info(ip, subdomian=''):
             if ipaddress.ip_address(ip) in ipaddress.ip_network(cdn):
                 ip_info['is_cdn'] = True
 
-        with geoip2.database.Reader(Path(__file__).parent.joinpath('GeoLite2-ASN.mmdb').resolve()) as reader:
-            response = reader.asn(ip)
-            for i in config.ASNS:
-                if response.autonomous_system_number == int(i):
-                    ip_info['is_cdn'] = True
+        response = config.geo_reader.asn(ip)
+        for i in config.ASNS:
+            if response.autonomous_system_number == int(i):
+                ip_info['is_cdn'] = True
         return ip_info
     except Exception as e:
         return str(e)
@@ -100,4 +109,4 @@ def update_ip_to_domain(ip_info):
 
 
 if __name__ == '__main__':
-    print(get_ip_info('', 'tshots.t9sec.com'))
+    print(get_ip_info('123.123.123.412'))

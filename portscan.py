@@ -19,6 +19,8 @@ def scan(ip, is_scan, subdomain):
         if (not is_scan) and (not ip_info['is_cdn']) and (not ip_info['is_private']):
             app = PortScan(ip_info['ip'])
             app.run()
+            if app.error:
+                raise Exception(app.error)
             for i in app.data:
                 ip_port_info = app.data.get(i)
                 ip = ip_port_info['ip']

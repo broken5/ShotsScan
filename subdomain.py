@@ -11,23 +11,28 @@ def scan(domain):
         app = oneforall.OneForAll(domain)
         app.run()
         for i in app.data:
-            subdomain = i['cname']
+            subdomain = i['subdomain']
             subdomain_ip = i['content']
-            if subdomain:
-                ip_info = get_ip_info(subdomain_ip)
+            city = None
+            is_private = False
+            is_cdn = False
+            if subdomain and subdomain_ip:
+                ip_info = get_ip_info(subdomain_ip.split(',')[0])
                 if isinstance(ip_info, dict):
                     city = ip_info['city']
                     is_private = ip_info['is_private']
                     is_cdn = ip_info['is_cdn']
-                else:
-                    raise Exception(ip_info)
-                domain_data['data'].append({
-                    'subdomain': subdomain,
-                    'subdomain_ip': subdomain_ip,
-                    'city': city,
-                    'is_private': is_private,
-                    'is_cdn': is_cdn
-                })
+            elif subdomain:
+                pass
+            else:
+                continue
+            domain_data['data'].append({
+                'subdomain': subdomain,
+                'subdomain_ip': subdomain_ip,
+                'city': city,
+                'is_private': is_private,
+                'is_cdn': is_cdn
+            })
         domain_data['code'] = 1
     except Exception as e:
         domain_data['code'] = 0

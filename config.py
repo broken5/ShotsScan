@@ -1,7 +1,11 @@
+import ipdb
+from pathlib import Path
+import geoip2.database
+
 # Shots密钥
-key = 'de905402a92272c880ecf851a53f4464'
+key = '79535e16ae5c997a7ccb50e7bc9bdf61'
 # Shots站点，记得后面加"/"
-website = 'http://www.fast.com/'
+website = 'http://www.shots.com/'
 get_domain_url = website + 'index.php/api/Task/getDomain'
 put_subdomain_url = website + 'index.php/api/Task/putSubdomain'
 get_ip_url = website + 'index.php/api/Task/getIp'
@@ -117,3 +121,6 @@ ASNS = [
     '17334', '16702', '16625', '12222', '209101', '201585', '135429', '395747', '394536', '209242', '203898', '202623',
     '14789', '133877', '13335', '132892', '21859', '6185', '47823'
 ]
+
+ip_db = ipdb.City(Path(__file__).parent.joinpath('lib/ipdata.ipdb'))
+geo_reader = geoip2.database.Reader(Path(__file__).parent.joinpath('lib/GeoLite2-ASN.mmdb').resolve())
