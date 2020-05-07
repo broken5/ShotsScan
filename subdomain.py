@@ -17,7 +17,8 @@ def scan(domain):
             is_private = False
             is_cdn = False
             if subdomain and subdomain_ip:
-                ip_info = get_ip_info(subdomain_ip.split(',')[0])
+                subdomain_ip = subdomain_ip.split(',')[0]
+                ip_info = get_ip_info(subdomain_ip)
                 if isinstance(ip_info, dict):
                     city = ip_info['city']
                     is_private = ip_info['is_private']
