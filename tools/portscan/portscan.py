@@ -1,4 +1,4 @@
-mport shodan
+import shodan
 import requests
 import nmap
 import time
