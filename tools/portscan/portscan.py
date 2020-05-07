@@ -19,21 +19,20 @@ class PortScan:
         if not isinstance(self.fofa, list):
             return f'Shodan API接口配置异常'
         else:
-            self.shodan = self.shodan[1]
+            shodan_api = self.shodan[1]
         logger.log('INFOR', f'开始Shodan端口扫描 - [{self.ip}]')
-        if self.shodan:
-            try:
-                result = self.shodan.host(self.ip)
-                data = result['data']
-                port_list = []
-                for i in data:
-                    port = i.get('port', '0')
-                    if port:
-                        port_list.append(port)
-                logger.log('INFOR', f'Shodan端口扫描完成 - [{self.ip}] {port_list}')
-                return port_list
-            except Exception as e:
-                return str(e)
+        try:
+            result = shodan_api.host(self.ip)
+            data = result['data']
+            port_list = []
+            for i in data:
+                port = i.get('port', '0')
+                if port:
+                    port_list.append(port)
+            logger.log('INFOR', f'Shodan端口扫描完成 - [{self.ip}] {port_list}')
+            return port_list
+        except Exception as e:
+            return str(e)
 
     def init_shodan(self):
         api = shodan.Shodan(config.shodan_api)
@@ -47,12 +46,12 @@ class PortScan:
         if not isinstance(self.fofa, list):
             return f'Fofa API接口配置异常'
         else:
-            self.fofa = self.fofa[1]
+            fofa_api = self.fofa[1]
         logger.log('INFOR', f'开始Fofa端口扫描 - [{self.ip}]')
         query = f'ip="{self.ip}"'
         qbase64 = b64encode(query.encode()).decode()
         try:
-            url = self.fofa + f'&qbase64={qbase64}'
+            url = fofa_api + f'&qbase64={qbase64}'
             r = requests.get(url)
             result = r.json()
             if result['error']:
