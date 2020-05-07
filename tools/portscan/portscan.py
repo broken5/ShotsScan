@@ -1,4 +1,4 @@
-import shodan
+mport shodan
 import requests
 import nmap
 import time
@@ -123,3 +123,4 @@ if __name__ == '__main__':
     portscan = PortScan('223.5.5.5')
     portscan.run()
     print(portscan.error)
+
