@@ -16,7 +16,7 @@ class PortScan:
         self.error = ''
 
     def shodan_scan(self):
-        if not isinstance(self.fofa, list):
+        if not isinstance(self.shodan, list):
             return f'Shodan API接口配置异常'
         else:
             shodan_api = self.shodan[1]
