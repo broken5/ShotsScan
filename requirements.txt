@@ -59,7 +59,7 @@ tldextract==2.2.2
 tqdm==4.45.0
 traitlets==4.3.3
 tzlocal==2.0.0
-urllib3==1.25.9
+urllib3==1.26.5
 wcwidth==0.1.9
 win32-setctime==1.0.1
 XlsxWriter==1.2.8
