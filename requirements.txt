@@ -45,7 +45,7 @@ python-nmap==0.6.1
 pytz==2019.3
 records==0.5.3
 requests==2.23.0
-lxml==4.5.0
+lxml==4.6.5
 requests-file==1.4.3
 requests-toolbelt==0.9.1
 shodan==1.23.0
